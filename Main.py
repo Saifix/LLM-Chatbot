@@ -5,44 +5,54 @@ from transformers import pipeline
 model_name = "facebook/bart-base"  # Adjust as needed
 nlp = pipeline("question-answering", model=model_name)
 
-# Knowledge base with synonyms and broader concepts
+# Expanded knowledge base with various categories and examples
 knowledge_base = {
     "product_features": {
         "phone_x": {"camera": "12MP", "battery": "4000mAh"},
         "phone_y": {"camera": "20MP", "battery": "5000mAh"},
-        "phones": {"camera": "varies", "battery": "varies"}  # Broader concept for "product"
+        "phones": {"camera": "varies", "battery": "varies"},
+        "laptops": {"processor": "i7", "RAM": "16GB"},
+        "cars": {"models": ["sedan", "SUV", "coupe"], "engines": ["gasoline", "electric"]}
     },
     "policies": {
         "return": "You can return the product within 30 days of purchase.",
-        "return policy": "You can return the product within 30 days of purchase."  # Synonym for "return"
+        "return policy": "You can return the product within 30 days of purchase."
+    },
+    "general_knowledge": {
+        "capitals": {
+            "France": "Paris",
+            "USA": "Washington D.C.",
+            "UK": "London"
+        },
+        "history": {
+            "WWII": "World War II, a global war that lasted from 1939 to 1945."
+        },
+        "science": {
+            "gravity": "The force by which a planet or other massive object attracts objects to it."
+        }
     }
 }
-
-import nltk  # Import NLTK library for basic text processing
 
 def answer_query(question):
   """
   Processes user query, performs basic cleaning, and retrieves relevant answer from knowledge base.
   """
-  # Preprocess the question (lowercase, remove punctuation, tokenize)
-  processed_question = nltk.word_tokenize(question.lower().strip())
+  processed_question = question.lower().strip()
+  # Consider adding more specific cleaning steps here if needed (e.g., removing special characters)
 
-  # Identify the relevant knowledge base category based on keywords and synonyms
   category = None
-  for word in processed_question:
+  for word in processed_question.split():
     if word in knowledge_base:
       category = word
-      break  # Stop searching after finding the first matching category
+      break
 
-  # If a category is found, use the LLM for information retrieval within that category
   if category:
-    # Use the LLM for question answering within the chosen category data
     answer = nlp(question=question, context=knowledge_base[category])["answer"]
     return answer
   else:
-    return "I'm still learning and might not understand everything yet. Can you rephrase your question?"
+    return "I'm still learning and might not know everything yet. Can you rephrase your question or try asking something different?"
 
-# User interaction loop (replace with actual user input and response display)
+# User interaction loop
 while True:
   user_input = input("User: ")
   response = answer_query(user_input)
