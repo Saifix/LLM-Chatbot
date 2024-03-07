@@ -5,15 +5,11 @@ from transformers import pipeline
 model_name = "facebook/bart-base"  # Adjust as needed
 nlp = pipeline("question-answering", model=model_name)
 
-# Expanded knowledge base with various categories and examples
-
-def answer_query(question):
-  
-  knowledge_base = {
+# Knowledge base with dictionary structure aligned with categories
+knowledge_base = {
     "product_features": {
         "phone_x": {"camera": "12MP", "battery": "4000mAh"},
         "phone_y": {"camera": "20MP", "battery": "5000mAh"},
-        "phones": {"camera": "varies", "battery": "varies"},
         "laptops": {"processor": "i7", "RAM": "16GB"},
         "cars": {"models": ["sedan", "SUV", "coupe"], "engines": ["gasoline", "electric"]}
     },
@@ -36,20 +32,19 @@ def answer_query(question):
     }
 }
 
+def answer_query(question):
   """
   Processes user query, performs basic cleaning, and retrieves relevant answer from knowledge base.
   """
   processed_question = question.lower().strip()
-  # Consider adding more specific cleaning steps here if needed (e.g., removing special characters)
-  print("processed_question"+ processed_question)
 
+  # Ensure category is a valid key in the knowledge base
   category = None
-  for word in processed_question.split():
-    if word in knowledge_base:
-      category = word
-      break
+  if processed_question in knowledge_base:
+    category = processed_question  # Use the entire question as the category if it matches a top-level key
 
   if category:
+    # Provide the entire knowledge base category as context (adjust based on your LLM model's requirements)
     answer = nlp(question=question, context=knowledge_base[category])["answer"]
     return answer
   else:
