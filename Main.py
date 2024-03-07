@@ -6,7 +6,10 @@ model_name = "facebook/bart-base"  # Adjust as needed
 nlp = pipeline("question-answering", model=model_name)
 
 # Expanded knowledge base with various categories and examples
-knowledge_base = {
+
+def answer_query(question):
+  
+  knowledge_base = {
     "product_features": {
         "phone_x": {"camera": "12MP", "battery": "4000mAh"},
         "phone_y": {"camera": "20MP", "battery": "5000mAh"},
@@ -33,7 +36,6 @@ knowledge_base = {
     }
 }
 
-def answer_query(question):
   """
   Processes user query, performs basic cleaning, and retrieves relevant answer from knowledge base.
   """
