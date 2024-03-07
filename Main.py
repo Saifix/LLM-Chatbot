@@ -41,6 +41,7 @@ def answer_query(question):
   """
   processed_question = question.lower().strip()
   # Consider adding more specific cleaning steps here if needed (e.g., removing special characters)
+  print("processed_question"+ processed_question)
 
   category = None
   for word in processed_question.split():
